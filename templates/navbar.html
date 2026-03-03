@@ -1,0 +1,17 @@
+<nav class="glass">
+    <div class="logo">BookSphere AI</div>
+    <ul class="nav-links">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'book_list' %}">Library</a></li>
+        <li><a href="{% url 'recommendation:home' %}">Recommendations</a></li>
+        <li><a href="#">Community</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'favorites_list' %}">Wishlist ❤️</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'signup' %}" class="btn btn-primary">Join</a></li>
+        {% endif %}
+    </ul>
+</nav>

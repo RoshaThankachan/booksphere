@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Wishlist - BookSphere AI{% endblock %}
+
+{% block content %}
+<h2 style="font-size:2.5rem; font-weight:800; margin-bottom:2rem;">Your Favourites</h2>
+
+{% if favorites %}
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem;">
+    {% for fav in favorites %}
+    {% with book=fav.book %}
+    <div class="glass book-card" style="display: flex; flex-direction: column; overflow: hidden; border-radius: 20px;">
+        <div style="position: relative; height: 350px; overflow: hidden;">
+            {% if book.cover_image %}
+            <img src="{{ book.cover_image.url }}" alt="{{ book.title }}"
+                style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+            <div style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                No Cover
+            </div>
+            {% endif %}
+            <div style="position:absolute; top: 1rem; left: 1rem; z-index:10;">
+                <a href="{% url 'toggle_favorite' book.id %}" style="text-decoration:none; font-size:1.5rem;">❤️</a>
+            </div>
+        </div>
+        <div style="padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1;">
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem;">
+                {{ book.title }}
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">by {{ book.author.name }}</p>
+            <div style="margin-top:auto; display:flex; gap:0.5rem;">
+                <a href="{% url 'book_detail' book.id %}" class="btn btn-outline" style="padding:0.4rem 0.8rem; font-size:0.85rem;">View Details</a>
+                <a href="{% url 'toggle_favorite' book.id %}" class="btn btn-danger" style="padding:0.4rem 0.8rem; font-size:0.85rem;">Remove</a>
+            </div>
+        </div>
+    </div>
+    {% endwith %}
+    {% endfor %}
+</div>
+{% else %}
+<p style="color: var(--text-muted);">You haven't added any books to your favourites yet. Browse the <a href="{% url 'book_list' %}" style="color: var(--primary);">library</a> to add some.</p>
+{% endif %}
+
+{% endblock %}

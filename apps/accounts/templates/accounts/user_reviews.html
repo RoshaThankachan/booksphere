@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Reviews - BookSphere AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+  <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">My Reviews</h1>
+  <p style="color: var(--text-muted); margin-bottom: 3rem;">Total reviews written: <strong>{{ total_reviews }}</strong></p>
+
+  {% if reviews %}
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    {% for review in reviews %}
+    <div class="glass" style="padding: 2rem; border-radius: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem;">
+            <a href="{% url 'book_detail' review.book.id %}" style="color: var(--primary); text-decoration: none;">{{ review.book.title }}</a>
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">by {{ review.book.author.name }}</p>
+        </div>
+        <span style="color: #f59e0b; font-size: 1.2rem; font-weight: 700;">⭐ {{ review.rating }}/5</span>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.3); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+        <p style="color: var(--text-main); line-height: 1.6;">{{ review.comment }}</p>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <p style="color: var(--text-muted); font-size: 0.85rem;">
+          Reviewed on {{ review.created_at|date:"M d, Y" }}
+        </p>
+        <a href="{% url 'book_detail' review.book.id %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">View Book</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="glass" style="padding: 4rem; text-align: center; border-radius: 16px;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">💬</div>
+    <p style="color: var(--text-muted); font-size: 1.1rem;">You haven't written any reviews yet.</p>
+    <p style="color: var(--text-muted); margin-top: 1rem;">Start by reading a book and sharing your thoughts!</p>
+    <a href="{% url 'book_list' %}" style="color: var(--primary); margin-top: 1.5rem; display: inline-block; font-weight: 600;">Browse our library →</a>
+  </div>
+  {% endif %}
+
+  <!-- Back Button -->
+  <div style="margin-top: 2rem;">
+    <a href="{% url 'dashboard' %}" class="btn btn-outline">← Back to Dashboard</a>
+  </div>
+</div>
+
+{% endblock %}

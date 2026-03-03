@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - BookSphere AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+  <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 3rem;">Edit Your Profile</h1>
+
+  <div class="glass" style="padding: 3rem; border-radius: 20px;">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="form-group">
+          <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}
+          <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ form.first_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}
+          <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ form.last_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+        <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ form.email.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+        {{ form.bio }}
+        {% if form.bio.errors %}
+        <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ form.bio.errors.0 }}</div>
+        {% endif %}
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Tell us about yourself in 500 characters or less.</p>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="{{ form.interests.id_for_label }}">{{ form.interests.label }}</label>
+        {{ form.interests }}
+        {% if form.interests.errors %}
+        <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ form.interests.errors.0 }}</div>
+        {% endif %}
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Example: Science Fiction, Mystery, Non-Fiction</p>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="{{ form.reading_goal.id_for_label }}">{{ form.reading_goal.label }}</label>
+        {{ form.reading_goal }}
+        {% if form.reading_goal.errors %}
+        <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ form.reading_goal.errors.0 }}</div>
+        {% endif %}
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">How many books do you want to read this year?</p>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="{{ form.profile_picture.id_for_label }}">{{ form.profile_picture.label }}</label>
+        {% if profile.profile_picture %}
+        <div style="margin-bottom: 1rem;">
+          <img src="{{ profile.profile_picture.url }}" alt="Profile" style="width: 150px; height: 150px; border-radius: 8px; object-fit: cover;">
+        </div>
+        {% endif %}
+        {{ form.profile_picture }}
+        {% if form.profile_picture.errors %}
+        <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ form.profile_picture.errors.0 }}</div>
+        {% endif %}
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Upload a profile picture (optional)</p>
+      </div>
+
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{% url 'profile_detail' %}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1rem;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+</style>
+
+{% endblock %}

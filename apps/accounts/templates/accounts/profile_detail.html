@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile - BookSphere AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+    <h1 style="font-size: 2.5rem; font-weight: 900;">My Profile</h1>
+    <a href="{% url 'profile_update' %}" class="btn btn-primary">Edit Profile</a>
+  </div>
+
+  <div class="glass" style="padding: 3rem; border-radius: 20px;">
+    <!-- Profile Picture -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+      {% if profile.profile_picture %}
+      <img src="{{ profile.profile_picture.url }}" alt="Profile" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+      {% else %}
+      <div style="width: 150px; height: 150px; background: var(--bg-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; margin-bottom: 1.5rem; font-size: 5rem;">
+        👤
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- User Information -->
+    <div style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem;">{{ user.first_name }} {{ user.last_name }}</h2>
+      <p style="color: var(--text-muted); font-size: 1.1rem;">@{{ user.username }}</p>
+    </div>
+
+    <!-- Info Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--glass-border);">
+      <div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Email</p>
+        <p style="font-size: 1rem;">{{ user.email }}</p>
+      </div>
+      <div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Member Since</p>
+        <p style="font-size: 1rem;">{{ user.date_joined|date:"M d, Y" }}</p>
+      </div>
+      <div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Reading Goal</p>
+        <p style="font-size: 1rem; font-weight: 700;">{{ profile.reading_goal }} books</p>
+      </div>
+      <div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Last Updated</p>
+        <p style="font-size: 1rem;">{{ profile.user.last_login|date:"M d, Y" }}</p>
+      </div>
+    </div>
+
+    <!-- Bio -->
+    {% if profile.bio %}
+    <div style="margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--glass-border);">
+      <p style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Bio</p>
+      <p style="font-size: 1rem; line-height: 1.6; color: var(--text-main);">{{ profile.bio }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Statistics -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--glass-border);">
+      <div style="text-align: center;">
+        <div style="font-size: 2rem; font-weight: 900; color: var(--primary);">{{ favorites_count }}</div>
+        <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Wishlist Items</p>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 2rem; font-weight: 900; color: var(--success);">{{ borrowed_count }}</div>
+        <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Books Borrowed</p>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 2rem; font-weight: 900; color: #f59e0b;">{{ reviews_count }}</div>
+        <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Reviews</p>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <a href="{% url 'profile_update' %}" class="btn btn-primary">Edit Profile</a>
+      <a href="{% url 'download_history' %}" class="btn btn-outline">View Download History</a>
+      <a href="{% url 'user_reviews' %}" class="btn btn-outline">View My Reviews</a>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

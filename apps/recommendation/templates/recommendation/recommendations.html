@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recommendations - BookSphere AI{% endblock %}
+
+{% block content %}
+
+<div style="margin-bottom: 4rem;">
+  <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">📖 Personalized Recommendations</h1>
+  <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 3rem;">Books specially picked for you based on your reading history and preferences</p>
+
+  <!-- Recommendation Stats -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 2rem; font-weight: 900; color: var(--primary);">{{ reading_count }}</div>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">Books Read</p>
+    </div>
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 2rem; font-weight: 900; color: #f59e0b;">{{ review_count }}</div>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">Reviews Written</p>
+    </div>
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 2rem; font-weight: 900; color: var(--success);">{{ personalized_recommendations|length }}</div>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">Recommendations</p>
+    </div>
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <a href="{% url 'recommendation:mood' %}" style="text-decoration: none;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎭</div>
+        <p style="color: var(--primary); font-weight: 600;">Browse by Mood</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Personalized Recommendations -->
+{% if personalized_recommendations %}
+<div style="margin-bottom: 4rem;">
+  <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 2rem;">Just For You</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 2rem;">
+    {% for rec in personalized_recommendations %}
+    <div class="glass book-card" style="overflow: hidden; border-radius: 16px; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="height: 280px; overflow: hidden; position: relative;">
+        {% if rec.book.cover_image %}
+        <img src="{{ rec.book.cover_image.url }}" alt="{{ rec.book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+        <div style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; font-size: 2rem;">📖</div>
+        {% endif %}
+        <!-- Recommendation Badge -->
+        <div style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--primary); color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+          {% if rec.reason == 'genre_match' %}
+            Your Interest
+          {% elif rec.reason == 'similar_to_read' %}
+            Similar
+          {% elif rec.reason == 'highly_rated' %}
+            ⭐ Top Rated
+          {% elif rec.reason == 'popular' %}
+            Popular
+          {% endif %}
+        </div>
+      </div>
+      <div style="padding: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ rec.book.title }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">{{ rec.book.author.name }}</p>
+        <a href="{% url 'book_detail' rec.book.id %}" class="btn btn-outline" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; text-align: center;">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Popular Books Section -->
+{% if popular_books %}
+<div style="margin-bottom: 4rem;">
+  <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 2rem;">⭐ Most Popular</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 2rem;">
+    {% for book in popular_books %}
+    <div class="glass book-card" style="overflow: hidden; border-radius: 16px; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="height: 280px; overflow: hidden; position: relative;">
+        {% if book.cover_image %}
+        <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+        <div style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; font-size: 2rem;">📖</div>
+        {% endif %}
+        <div style="position: absolute; top: 0.5rem; right: 0.5rem; background: #f59e0b; color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Trending 🔥</div>
+      </div>
+      <div style="padding: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ book.title }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">{{ book.author.name }}</p>
+        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; text-align: center;">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Browse by Genre Section -->
+{% if top_genres %}
+<div style="margin-bottom: 4rem;">
+  <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 2rem;">Browse Your Favorite Genres</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem;">
+    {% for genre in top_genres %}
+    <a href="{% url 'recommendation:by_genre' genre.id %}" class="glass" style="padding: 2rem; border-radius: 12px; text-align: center; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">📚</div>
+      <h3 style="font-weight: 700; color: var(--primary);">{{ genre.name }}</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Explore →</p>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Mood-Based Recommendations CTA -->
+<div class="glass" style="padding: 4rem 3rem; border-radius: 20px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); text-align: center;">
+  <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem;">🎭 Find Books by Mood</h2>
+  <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">Not sure what you're in the mood for? Let us help you find the perfect book based on your current mood.</p>
+  <a href="{% url 'recommendation:mood' %}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">Browse by Mood</a>
+</div>
+
+{% endblock %}

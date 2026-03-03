@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - BookSphere AI{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="glass" style="padding: 5rem 3rem; border-radius: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); margin-bottom: 4rem; text-align: center;">
+  <h1 style="font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Welcome to BookSphere AI 📚</h1>
+  <p style="font-size: 1.4rem; color: var(--text-muted); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Your AI-Powered Smart Library. Discover, Read, and Share Your Passion for Books</p>
+  
+  {% if not user.is_authenticated %}
+  <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    <a href="{% url 'signup' %}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">Get Started Free</a>
+    <a href="{% url 'book_list' %}" class="btn btn-outline" style="padding: 1rem 2rem; font-size: 1.1rem;">Browse Library</a>
+  </div>
+  {% else %}
+  <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    <a href="{% url 'book_list' %}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">Explore Books</a>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline" style="padding: 1rem 2rem; font-size: 1.1rem;">My Dashboard</a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Platform Stats -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+  <div class="glass" style="padding: 2.5rem; border-radius: 16px; text-align: center;">
+    <div style="font-size: 3rem; font-weight: 900; color: var(--primary); margin-bottom: 0.5rem;">{{ total_books }}</div>
+    <p style="color: var(--text-muted); font-size: 1rem;">Books Available</p>
+  </div>
+  <div class="glass" style="padding: 2.5rem; border-radius: 16px; text-align: center;">
+    <div style="font-size: 3rem; font-weight: 900; color: var(--success); margin-bottom: 0.5rem;">{{ total_users }}</div>
+    <p style="color: var(--text-muted); font-size: 1rem;">Active Readers</p>
+  </div>
+  <div class="glass" style="padding: 2.5rem; border-radius: 16px; text-align: center;">
+    <div style="font-size: 3rem; font-weight: 900; color: #f59e0b; margin-bottom: 0.5rem;">{{ total_reviews }}</div>
+    <p style="color: var(--text-muted); font-size: 1rem;">Community Reviews</p>
+  </div>
+  <div class="glass" style="padding: 2.5rem; border-radius: 16px; text-align: center;">
+    <div style="font-size: 3rem; font-weight: 900; color: #ec4899; margin-bottom: 0.5rem;">{{ total_favorites }}</div>
+    <p style="color: var(--text-muted); font-size: 1rem;">Books Wishlisted</p>
+  </div>
+</div>
+
+<!-- Quote Section -->
+<div class="glass" style="padding: 4rem 3rem; border-radius: 20px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%); margin-bottom: 4rem; text-align: center;">
+  {% if quotes %}
+    {% with quote=quotes|random %}
+    <div style="max-width: 700px; margin: 0 auto;">
+      <p style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.6; color: var(--text-main);">
+        "{{ quote.text }}"
+      </p>
+      <p style="color: var(--text-muted); font-size: 1.1rem;">— {{ quote.author }}</p>
+    </div>
+    {% endwith %}
+  {% endif %}
+</div>
+
+<!-- Features Section -->
+<div style="margin-bottom: 4rem;">
+  <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 3rem; text-align: center;">Why BookSphere AI?</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Vast Collection</h3>
+      <p style="color: var(--text-muted); line-height: 1.6;">Access thousands of books across all genres, from classics to contemporary bestsellers.</p>
+    </div>
+    
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">❤️</div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Personal Wishlist</h3>
+      <p style="color: var(--text-muted); line-height: 1.6;">Save your favorite books and create a personalized collection of books you want to read.</p>
+    </div>
+    
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">⭐</div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Community Reviews</h3>
+      <p style="color: var(--text-muted); line-height: 1.6;">Read and write reviews, share your thoughts, and discover what other readers love.</p>
+    </div>
+    
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Smart Dashboard</h3>
+      <p style="color: var(--text-muted); line-height: 1.6;">Track your reading progress, set goals, and manage your library with an intuitive dashboard.</p>
+    </div>
+    
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">AI Recommendations</h3>
+      <p style="color: var(--text-muted); line-height: 1.6;">Get personalized book recommendations based on your reading history and preferences.</p>
+    </div>
+    
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Community</h3>
+      <p style="color: var(--text-muted); line-height: 1.6;">Connect with book lovers, join discussions, and share your love of reading.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Featured Books Section -->
+{% if featured_books %}
+<div style="margin-bottom: 4rem;">
+  <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 3rem;">Featured Books</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem;">
+    {% for book in featured_books %}
+    <div class="glass book-card" style="overflow: hidden; border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(59, 130, 246, 0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+      <div style="height: 280px; overflow: hidden; position: relative;">
+        {% if book.cover_image %}
+        <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+        <div style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">📖</div>
+        {% endif %}
+        <div style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--primary); color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">{{ book.genre.name }}</div>
+      </div>
+      <div style="padding: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">{{ book.title }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">{{ book.author.name }}</p>
+        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline" style="width: 100%; padding: 0.6rem; font-size: 0.9rem; text-align: center;">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Popular Books Section -->
+{% if popular_books %}
+<div style="margin-bottom: 4rem;">
+  <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 3rem;">Popular Books</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem;">
+    {% for book in popular_books %}
+    <div class="glass book-card" style="overflow: hidden; border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(59, 130, 246, 0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+      <div style="height: 280px; overflow: hidden; position: relative;">
+        {% if book.cover_image %}
+        <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+        <div style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">📖</div>
+        {% endif %}
+        <div style="position: absolute; top: 0.5rem; right: 0.5rem; background: #f59e0b; color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">⭐ Popular</div>
+      </div>
+      <div style="padding: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">{{ book.title }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">{{ book.author.name }}</p>
+        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline" style="width: 100%; padding: 0.6rem; font-size: 0.9rem; text-align: center;">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Recent Books Section -->
+{% if recent_books %}
+<div style="margin-bottom: 4rem;">
+  <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 3rem;">Recently Added</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem;">
+    {% for book in recent_books %}
+    <div class="glass book-card" style="overflow: hidden; border-radius: 16px; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(59, 130, 246, 0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+      <div style="height: 280px; overflow: hidden; position: relative;">
+        {% if book.cover_image %}
+        <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+        <div style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">📖</div>
+        {% endif %}
+        <div style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--success); color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">New</div>
+      </div>
+      <div style="padding: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">{{ book.title }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">{{ book.author.name }}</p>
+        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline" style="width: 100%; padding: 0.6rem; font-size: 0.9rem; text-align: center;">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Browse by Genre Section -->
+{% if genres %}
+<div style="margin-bottom: 4rem;">
+  <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 3rem;">Browse by Genre</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem;">
+    {% for genre in genres %}
+    <a href="{% url 'book_list' %}?genre={{ genre.id }}" class="glass" style="padding: 2rem; border-radius: 12px; text-align: center; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 10px 30px rgba(59, 130, 246, 0.2)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">📚</div>
+      <h3 style="font-weight: 700; color: var(--primary);">{{ genre.name }}</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Explore →</p>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- CTA Section -->
+<div class="glass" style="padding: 4rem 3rem; border-radius: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%); text-align: center; margin-bottom: 2rem;">
+  <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem;">Ready to Start Your Reading Journey?</h2>
+  <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Join thousands of readers discovering their next favorite book on BookSphere AI.</p>
+  
+  {% if not user.is_authenticated %}
+  <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    <a href="{% url 'signup' %}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">Create Free Account</a>
+    <a href="{% url 'login' %}" class="btn btn-outline" style="padding: 1rem 2rem; font-size: 1rem;">Sign In</a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

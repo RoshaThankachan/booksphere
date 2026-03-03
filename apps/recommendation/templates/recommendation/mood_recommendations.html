@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Books by Mood - BookSphere AI{% endblock %}
+
+{% block content %}
+
+<h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 3rem;">🎭 Find Books by Your Mood</h1>
+
+<!-- Mood Selection -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 4rem;">
+  {% for mood_choice in mood_choices %}
+  <a href="?mood={{ mood_choice }}" class="glass" style="padding: 2rem; border-radius: 16px; text-align: center; text-decoration: none; transition: all 0.3s ease; {% if mood == mood_choice %}background: var(--primary); color: white;{% else %}color: inherit;{% endif %}" onmouseover="{% if mood != mood_choice %}this.style.transform='scale(1.05)'{% endif %}" onmouseout="this.style.transform='scale(1)'">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">
+      {% if mood_choice == 'happy' %}😊{% elif mood_choice == 'sad' %}😢{% elif mood_choice == 'thriller' %}😱{% elif mood_choice == 'learn' %}🧠{% elif mood_choice == 'relax' %}😌{% endif %}
+    </div>
+    <h3 style="font-weight: 700; text-transform: capitalize;">{{ mood_choice }}</h3>
+  </a>
+  {% endfor %}
+</div>
+
+<!-- Recommendations for Selected Mood -->
+{% if recommendations %}
+<div>
+  <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 2rem; text-transform: capitalize;">Books for When You're Feeling {{ mood }}</h2>
+  
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 2rem;">
+    {% for book in recommendations %}
+    <div class="glass book-card" style="overflow: hidden; border-radius: 16px; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="height: 280px; overflow: hidden; position: relative;">
+        {% if book.cover_image %}
+        <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+        <div style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; font-size: 2rem;">📖</div>
+        {% endif %}
+        <div style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--primary); color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">{{ book.genre.name }}</div>
+      </div>
+      <div style="padding: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">{{ book.title }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">{{ book.author.name }}</p>
+        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; text-align: center;">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="glass" style="padding: 4rem; text-align: center; border-radius: 16px;">
+  <p style="color: var(--text-muted); font-size: 1.1rem;">No recommendations found for this mood. Please try another one!</p>
+</div>
+{% endif %}
+
+<div style="margin-top: 3rem;">
+  <a href="{% url 'recommendation:home' %}" class="btn btn-outline">← Back to Recommendations</a>
+</div>
+
+{% endblock %}

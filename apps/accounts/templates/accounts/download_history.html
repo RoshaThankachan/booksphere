@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Download History - BookSphere AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+  <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">Download & Borrow History</h1>
+  <p style="color: var(--text-muted); margin-bottom: 3rem;">Total books borrowed: <strong>{{ total_borrowed }}</strong></p>
+
+  <!-- Active Borrows -->
+  {% if active_borrows %}
+  <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 1.5rem; margin-top: 2rem;">Currently Borrowed ({{ active_borrows.count }})</h2>
+  <div class="glass" style="padding: 2rem; border-radius: 16px; margin-bottom: 3rem; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--glass-border);">
+          <th style="text-align: left; padding: 1rem;">Book Title</th>
+          <th style="text-align: left; padding: 1rem;">Author</th>
+          <th style="text-align: left; padding: 1rem;">Borrowed Date</th>
+          <th style="text-align: left; padding: 1rem;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for issue in active_borrows %}
+        <tr style="border-bottom: 1px solid var(--glass-border);">
+          <td style="padding: 1rem;">
+            <a href="{% url 'book_detail' issue.book.id %}" style="color: var(--primary); text-decoration: none; font-weight: 600;">{{ issue.book.title }}</a>
+          </td>
+          <td style="padding: 1rem; color: var(--text-muted);">{{ issue.book.author.name }}</td>
+          <td style="padding: 1rem; color: var(--text-muted); font-size: 0.9rem;">{{ issue.issued_date|date:"M d, Y" }}</td>
+          <td style="padding: 1rem;">
+            {% if issue.book.book_file %}
+            <a href="{{ issue.book.book_file.url }}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Download</a>
+            {% else %}
+            <span style="color: var(--text-muted); font-size: 0.9rem;">-</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Returned Books -->
+  {% if returned_borrows %}
+  <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 1.5rem; margin-top: 2rem;">Returned Books ({{ returned_borrows.count }})</h2>
+  <div class="glass" style="padding: 2rem; border-radius: 16px; margin-bottom: 3rem; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--glass-border);">
+          <th style="text-align: left; padding: 1rem;">Book Title</th>
+          <th style="text-align: left; padding: 1rem;">Author</th>
+          <th style="text-align: left; padding: 1rem;">Borrowed</th>
+          <th style="text-align: left; padding: 1rem;">Returned</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for issue in returned_borrows %}
+        <tr style="border-bottom: 1px solid var(--glass-border);">
+          <td style="padding: 1rem;">
+            <a href="{% url 'book_detail' issue.book.id %}" style="color: var(--primary); text-decoration: none; font-weight: 600;">{{ issue.book.title }}</a>
+          </td>
+          <td style="padding: 1rem; color: var(--text-muted);">{{ issue.book.author.name }}</td>
+          <td style="padding: 1rem; color: var(--text-muted); font-size: 0.9rem;">{{ issue.issued_date|date:"M d, Y" }}</td>
+          <td style="padding: 1rem; color: var(--success); font-size: 0.9rem;">
+            {% if issue.return_date %}
+            {{ issue.return_date|date:"M d, Y" }}
+            {% else %}
+            <span style="color: var(--text-muted);">-</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Empty State -->
+  {% if not active_borrows and not returned_borrows %}
+  <div class="glass" style="padding: 4rem; text-align: center; border-radius: 16px;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">📚</div>
+    <p style="color: var(--text-muted); font-size: 1.1rem;">You haven't borrowed any books yet.</p>
+    <a href="{% url 'book_list' %}" style="color: var(--primary); margin-top: 1rem; display: inline-block; font-weight: 600;">Browse our library →</a>
+  </div>
+  {% endif %}
+
+  <!-- Back Button -->
+  <div style="margin-top: 2rem;">
+    <a href="{% url 'dashboard' %}" class="btn btn-outline">← Back to Dashboard</a>
+  </div>
+</div>
+
+{% endblock %}

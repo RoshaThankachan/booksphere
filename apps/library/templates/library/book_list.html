@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Library - BookSphere AI{% endblock %}
+
+{% block content %}
+<div class="library-header" style="margin-bottom: 3rem;">
+    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">Smart <span class="logo"
+            style="font-size: 2.5rem;">Library</span> <span
+            style="font-size: 1rem; background: var(--success); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; vertical-align: middle;">LIVE</span>
+    </h2>
+    <p style="color: var(--text-muted); max-width: 600px;">Explore our intelligent collection of books curated just for
+        you.</p>
+</div>
+
+<form method="GET" class="glass"
+    style="padding: 1.5rem; margin-bottom: 3rem; display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end; border-radius: 12px;">
+    <div class="form-group" style="margin-bottom: 0;">
+        <label>Search Interests</label>
+        <input type="text" name="q" placeholder="Keywords, titles, authors..." value="{{ request.GET.q }}">
+    </div>
+    <div class="form-group" style="margin-bottom: 0;">
+        <label>Filter by Genre</label>
+        <select name="genre">
+            <option value="">All Genres</option>
+            {% for genre in genres %}
+<option value="{{ genre.id }}" {% if selected_genre_id == genre.id %}selected{% endif %}>                {{ genre.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem;">
+    {% for book in page_obj %}
+    <div class="glass book-card" style="display: flex; flex-direction: column; overflow: hidden; border-radius: 20px;">
+        <div style="position: relative; height: 350px; overflow: hidden;">
+            {% if book.cover_image %}
+            <img src="{{ book.cover_image.url }}" alt="{{ book.title }}"
+                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+            {% else %}
+            <div
+                style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                No Cover
+            </div>
+            {% endif %}
+            <!-- heart toggle -->
+            <div style="position:absolute; top: 1rem; left: 1rem; z-index:10;">
+                {% if user.is_authenticated %}
+                <a href="{% url 'toggle_favorite' book.id %}" style="text-decoration:none; font-size:1.5rem;">
+                    {% if book.id in favorite_ids %}❤️{% else %}🤍{% endif %}
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}?next={% url 'book_list' %}" style="text-decoration:none; font-size:1.5rem;">🤍</a>
+                {% endif %}
+            </div>
+            <div style="position: absolute; top: 1rem; right: 1rem;">
+                <span class="glass tag"
+                    style="padding: 0.4rem 0.8rem; background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); color: var(--primary); border-radius: 50px;">
+                    {{ book.genre.name }}
+                </span>
+            </div>
+        </div>
+
+        <div style="padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1;">
+            <div
+                style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: #f59e0b; font-weight: 700;">
+                ⭐ 4.8
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem;">
+                <a href="{% url 'book_detail' book.id %}"
+                    style="text-decoration: none; color: #1e293b !important; display: block;">{{ book.title }}</a>
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">by {{ book.author.name }}</p>
+
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+                <a href="{% url 'book_detail' book.id %}" class="btn btn-outline"
+                    style="padding: 0.5rem 1rem; font-size: 0.85rem; margin-left: 0;">View Details</a>
+                {% if book.is_available %}
+                <span style="color: var(--success); font-size: 0.8rem; font-weight: 600;">Available</span>
+                {% else %}
+                <span style="color: var(--danger); font-size: 0.8rem; font-weight: 600;">Issued</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="glass" style="grid-column: 1 / -1; padding: 4rem; text-align: center;">
+        <p style="color: var(--text-muted); font-size: 1.1rem;">No books found matching your criteria.</p>
+        <a href="{% url 'book_list' %}" style="color: var(--primary); margin-top: 1rem; display: inline-block;">Clear
+            all filters</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<div style="margin-top: 4rem; display: flex; justify-content: center; gap: 1rem;">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}"
+        class="btn btn-outline">Previous</a>
+    {% endif %}
+
+    <span class="glass"
+        style="padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 600; background: var(--primary); color: white;">
+        {{ page_obj.number }}
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}"
+        class="btn btn-outline">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

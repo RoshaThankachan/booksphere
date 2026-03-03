@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ genre.name }} Books - BookSphere AI{% endblock %}
+
+{% block content %}
+
+{% if error %}
+<div class="glass" style="padding: 2rem; border-radius: 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--danger); text-align: center;">
+  <p>{{ error }}</p>
+  <a href="{% url 'recommendation:home' %}" class="btn btn-outline" style="margin-top: 1rem;">Back to Recommendations</a>
+</div>
+{% else %}
+
+<h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">📚 {{ genre.name }}</h1>
+<p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 3rem;">A curated selection from the {{ genre.name }} genre that you might enjoy</p>
+
+<!-- Stats -->
+<div style="display: flex; gap: 2rem; margin-bottom: 3rem; flex-wrap: wrap;">
+  <div class="glass" style="padding: 1.5rem 2rem; border-radius: 12px;">
+    <div style="font-size: 2rem; font-weight: 900; color: var(--primary);">{{ recommendation_count }}</div>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Books Available</p>
+  </div>
+</div>
+
+<!-- Books Grid -->
+{% if books %}
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 2rem;">
+  {% for book in books %}
+  <div class="glass book-card" style="overflow: hidden; border-radius: 16px; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div style="height: 280px; overflow: hidden; position: relative;">
+      {% if book.cover_image %}
+      <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+      {% else %}
+      <div style="width: 100%; height: 100%; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; font-size: 2rem;">📖</div>
+      {% endif %}
+      {% if book.review_count %}
+      <div style="position: absolute; top: 0.5rem; right: 0.5rem; background: #f59e0b; color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+        ⭐ {{ book.avg_rating|floatformat:1|default:"N/A" }}
+      </div>
+      {% endif %}
+    </div>
+    <div style="padding: 1.5rem;">
+      <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ book.title }}</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">{{ book.author.name }}</p>
+      {% if book.review_count %}
+      <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">{{ book.review_count }} review{{ book.review_count|pluralize }}</p>
+      {% endif %}
+      <a href="{% url 'book_detail' book.id %}" class="btn btn-outline" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; text-align: center;">View Details</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="glass" style="padding: 4rem; text-align: center; border-radius: 16px;">
+  <p style="color: var(--text-muted); font-size: 1.1rem;">No new books found in this genre for you. Check back later or explore other genres!</p>
+  <a href="{% url 'recommendation:home' %}" class="btn btn-outline" style="margin-top: 1.5rem;">Explore Other Recommendations</a>
+</div>
+{% endif %}
+
+<div style="margin-top: 3rem;">
+  <a href="{% url 'recommendation:home' %}" class="btn btn-outline">← Back to Recommendations</a>
+</div>
+
+{% endif %}
+
+{% endblock %}

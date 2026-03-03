@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - BookSphere AI{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 1fr auto; gap: 3rem; margin-bottom: 4rem;">
+  <!-- Main Content -->
+  <div>
+    <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem;">Welcome, {{ user.first_name|default:user.username }}!</h1>
+    <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 3rem;">Here's your reading dashboard</p>
+
+    <!-- Stats Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+        <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary);">{{ favorites_count }}</div>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Wishlist Items</p>
+        <a href="{% url 'favorites_list' %}" style="color: var(--primary); text-decoration: none; font-weight: 600; margin-top: 1rem; display: inline-block;">View →</a>
+      </div>
+      <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+        <div style="font-size: 2.5rem; font-weight: 900; color: var(--success);">{{ borrowed_count }}</div>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Active Borrows</p>
+        <a href="{% url 'download_history' %}" style="color: var(--primary); text-decoration: none; font-weight: 600; margin-top: 1rem; display: inline-block;">View →</a>
+      </div>
+      <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+        <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary);">{{ returned_count }}</div>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Returned Books</p>
+        <a href="{% url 'download_history' %}" style="color: var(--primary); text-decoration: none; font-weight: 600; margin-top: 1rem; display: inline-block;">View →</a>
+      </div>
+      <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+        <div style="font-size: 2.5rem; font-weight: 900; color: #f59e0b;">{{ reviews_count }}</div>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Reviews Written</p>
+        <a href="{% url 'user_reviews' %}" style="color: var(--primary); text-decoration: none; font-weight: 600; margin-top: 1rem; display: inline-block;">View →</a>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; margin-top: 3rem;">Quick Actions</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      <a href="{% url 'profile_detail' %}" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
+        👤 View Profile
+      </a>
+      <a href="{% url 'profile_update' %}" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
+        ✏️ Edit Profile
+      </a>
+      <a href="{% url 'book_list' %}" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
+        📚 Browse Books
+      </a>
+      <a href="{% url 'favorites_list' %}" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
+        ❤️ My Wishlist
+      </a>
+    </div>
+
+    <!-- Recent Activities -->
+    {% if recent_favorites %}
+    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; margin-top: 3rem;">Recent Wishlist Items</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      {% for fav in recent_favorites %}
+      <div class="glass" style="overflow: hidden; border-radius: 12px; text-align: center;">
+        {% if fav.book.cover_image %}
+        <img src="{{ fav.book.cover_image.url }}" alt="{{ fav.book.title }}" style="width: 100%; height: 200px; object-fit: cover;">
+        {% else %}
+        <div style="width: 100%; height: 200px; background: var(--bg-accent); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+          No Cover
+        </div>
+        {% endif %}
+        <div style="padding: 1rem;">
+          <p style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">{{ fav.book.title|truncatewords:3 }}</p>
+          <a href="{% url 'book_detail' fav.book.id %}" style="color: var(--primary); text-decoration: none; font-size: 0.8rem; display: inline-block; margin-top: 0.5rem;">View →</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if recent_borrowed %}
+    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; margin-top: 3rem;">Recent Borrows</h3>
+    <div class="glass" style="padding: 2rem; border-radius: 16px; overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--glass-border);">
+            <th style="text-align: left; padding: 1rem;">Book Title</th>
+            <th style="text-align: left; padding: 1rem;">Borrowed Date</th>
+            <th style="text-align: left; padding: 1rem;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for issue in recent_borrowed %}
+          <tr style="border-bottom: 1px solid var(--glass-border);">
+            <td style="padding: 1rem;">
+              <a href="{% url 'book_detail' issue.book.id %}" style="color: var(--primary); text-decoration: none;">{{ issue.book.title }}</a>
+            </td>
+            <td style="padding: 1rem; color: var(--text-muted); font-size: 0.9rem;">{{ issue.issued_date|date:"M d, Y" }}</td>
+            <td style="padding: 1rem;">
+              {% if issue.is_returned %}
+                <span style="background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Returned</span>
+              {% else %}
+                <span style="background: rgba(59, 130, 246, 0.2); color: var(--primary); padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Active</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Sidebar: Profile Card -->
+  <div style="position: sticky; top: 140px; align-self: start; width: 300px;">
+    <div class="glass" style="padding: 2rem; border-radius: 16px; text-align: center;">
+      {% if profile.profile_picture %}
+      <img src="{{ profile.profile_picture.url }}" alt="Profile" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; margin-bottom: 1.5rem;">
+      {% else %}
+      <div style="width: 120px; height: 120px; background: var(--bg-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; margin-bottom: 1.5rem; font-size: 3rem;">
+        👤
+      </div>
+      {% endif %}
+
+      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">{{ user.first_name|default:user.username }}</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">@{{ user.username }}</p>
+
+      {% if profile.bio %}
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">{{ profile.bio }}</p>
+      {% endif %}
+
+      <div style="display: flex; gap: 0.5rem; flex-direction: column;">
+        <a href="{% url 'profile_detail' %}" class="btn btn-outline" style="width: 100%;">View Profile</a>
+        <a href="{% url 'profile_update' %}" class="btn btn-primary" style="width: 100%;">Edit Profile</a>
+      </div>
+
+      {% if profile.reading_goal %}
+      <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--glass-border); text-align: left;">
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.5rem;">Reading Goal</p>
+        <p style="font-size: 1.5rem; font-weight: 700;">{{ profile.reading_goal }} books</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

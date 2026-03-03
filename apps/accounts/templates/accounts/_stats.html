@@ -1,0 +1,8 @@
+{% load favorite_tags %}
+{% if stat_type == 'favorites' %}
+  {% favorites_count user %}
+{% elif stat_type == 'borrowed' %}
+  {% borrowed_count user %}
+{% elif stat_type == 'reviews' %}
+  {% reviews_count user %}
+{% endif %}
